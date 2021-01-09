@@ -31,7 +31,7 @@ all help:
 
 .PHONY: run
 run: env
-	service $(PROJECTNAME) start
+	flask run
 
 
 .PHONY: deploy

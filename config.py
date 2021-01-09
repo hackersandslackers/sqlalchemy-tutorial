@@ -10,4 +10,5 @@ load_dotenv(path.join(basedir, ".env"))
 
 
 SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI")
+SQLALCHEMY_DATABASE_PEM = environ.get("SQLALCHEMY_DATABASE_PEM")
 TIME_NOW = datetime.now()

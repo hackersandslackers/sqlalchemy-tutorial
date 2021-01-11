@@ -1,6 +1,6 @@
 """Create database connection."""
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
 
 from config import SQLALCHEMY_DATABASE_PEM, SQLALCHEMY_DATABASE_URI
 
@@ -12,4 +12,5 @@ db = create_engine(
 )
 
 # Create database session
-session = Session(db)
+Session = sessionmaker(bind=db)
+session = Session()

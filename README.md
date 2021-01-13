@@ -10,7 +10,12 @@
 
 ![SQLAlchemy Tutorial](https://github.com/hackersandslackers/sqlalchemy-tutorial/blob/master/.github/sqlalchemy@2x.jpg?raw=true)
 
-**Tutorial**: https://hackersandslackers.com/python-database-management-sqlalchemy/
+This repository contains the source code for a four-part tutorial series on SQLAlchemy:
+
+1. [Databases in Python Made Easy with SQLAlchemy](https://hackersandslackers.com/python-database-management-sqlalchemy)
+2. [Implement an ORM with SQLAlchemy](https://hackersandslackers.com/implement-sqlalchemy-orm)
+3. [Relationships in SQLAlchemy Data Models](https://hackersandslackers.com/sqlalchemy-data-models)
+4. [Constructing Database Queries with SQLAlchemy](https://hackersandslackers.com/database-queries-sqlalchemy-orm)
 
 # Getting Started
 
@@ -22,6 +27,7 @@ Replace the values in **.env.example** with your values and rename this file to 
 
 
 * `SQLALCHEMY_DATABASE_URI`: Connection URI of a SQL database.
+* `SQLALCHEMY_DATABASE_PEM` _(Optional)_: PEM key for databases requiring an SSL connection.
 
 *Remember never to commit secrets saved in .env files to Github.*
 

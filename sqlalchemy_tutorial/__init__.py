@@ -1,21 +1,20 @@
-"""Script entry point."""
-import pprint
+"""Run source code for each tutorial found on HackersAndSlackers."""
+from database import db, session
 
-from sqlalchemy_tutorial.database.connect import db
-from sqlalchemy_tutorial.database.models import create_tables
-from sqlalchemy_tutorial.orm import orm_create_user
-from sqlalchemy_tutorial.queries import fetch_job_listings, update_job_listing
-
-# Print formatter
-pp = pprint.PrettyPrinter(indent=4, width=300)
+from .logger import LOGGER
+from .part1_connections import fetch_job_listings, update_job_listing
+from .part2_orm_models import orm_create_user, orm_delete_user
 
 
 def init_script():
-    """Demonstrate SELECT and UPDATE queries with SQLAlchemy."""
-    create_tables()
-    rows_selected = fetch_job_listings(db)
-    pp.pprint(rows_selected)
-    rows_updated = update_job_listing(db)
-    print(rows_updated)
-    user = orm_create_user()
-    print(user)
+    """Run all scripts."""
+
+    # Part 1: Executing SELECT and UPDATE queries with an SQLAlchemy engine
+    LOGGER.info("Part 1: Executing queries against an SQLAlchemy engine.")
+    fetch_job_listings(db)
+    update_job_listing(db)
+
+    # Part 2: Implementing an ORM
+    LOGGER.info("Part 2: Create and delete records from a data model.")
+    orm_create_user(session)
+    orm_delete_user(session)

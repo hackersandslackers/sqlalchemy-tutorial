@@ -31,7 +31,7 @@ all help:
 
 .PHONY: run
 run: env
-	flask run
+	python main.py
 
 
 .PHONY: deploy

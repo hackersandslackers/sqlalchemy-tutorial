@@ -4,30 +4,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from sqlalchemy_tutorial.database import db
+from database import db
 
 Base = declarative_base()
-
-
-class User(Base):
-    """User account."""
-
-    __tablename__ = "user"
-
-    id = Column(Integer, primary_key=True, autoincrement="auto")
-    username = Column(String(255), unique=True, nullable=False)
-    password = Column(Text, nullable=False)
-    email = Column(String(255), unique=True, nullable=False)
-    first_name = Column(String(255))
-    last_name = Column(String(255))
-    bio = Column(Text)
-    avatar_url = Column(Text)
-    last_seen = Column(DateTime)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-
-    def __repr__(self):
-        return "<User %r>" % self.username
 
 
 class Player(Base):
@@ -69,5 +48,4 @@ class Team(Base):
         return "<Team {}>".format(self.id)
 
 
-def create_tables():
-    return Base.metadata.create_all(db)
+Base.metadata.create_all(db)

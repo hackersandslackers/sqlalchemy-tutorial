@@ -9,43 +9,69 @@ from database import db
 Base = declarative_base()
 
 
-class Player(Base):
-    """Individual player belonging to a team."""
+class User(Base):
+    """User account."""
 
-    __tablename__ = "player"
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, autoincrement="auto")
-    team_id = Column(Integer, ForeignKey("team.id"), nullable=False)
-    first_name = Column(String(255), nullable=False)
-    last_name = Column(String(255), nullable=False)
-    position = Column(String(100), nullable=False)
-    injured = Column(Boolean)
-    description = Column(Text)
+    username = Column(String(255), unique=True, nullable=False)
+    password = Column(Text, nullable=False)
+    email = Column(String(255), unique=True, nullable=False)
+    first_name = Column(String(255))
+    last_name = Column(String(255))
+    bio = Column(Text)
+    avatar_url = Column(Text)
+    role = Column(String(255))
+    last_seen = Column(DateTime)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, onupdate=func.now())
+
+    def __repr__(self):
+        return "<User %r>" % self.username
+
+
+class Comment(Base):
+    """User-generated comment on a blog post."""
+
+    __tablename__ = "comment"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    post_id = Column(Integer, index=True)
+    body = Column(Text)
+    upvotes = Column(Integer, default=1)
+    removed = Column(Boolean, default=False)
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    user = relationship("User", backref="comments")
+
+    def __repr__(self):
+        return "<Comment %r>" % self.id
+
+
+class Post(Base):
+    """Blog post/article."""
+
+    __tablename__ = "post"
+
+    id = Column(Integer, primary_key=True, index=True)
+    author_id = Column(Integer, ForeignKey("user.id"))
+    slug = Column(String(255), nullable=False, unique=True)
+    title = Column(String(255), nullable=False)
+    summary = Column(String(400))
+    feature_image = Column(String(300))
+    body = Column(Text)
+    status = Column(String(255), nullable=False, default="unpublished")
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
     # Relationships
-    team = relationship("Team")
+    author = relationship("User", backref="posts")
 
     def __repr__(self):
-        return "<Player {}>".format(self.id)
-
-
-class Team(Base):
-    """Team consisting of many players."""
-
-    __tablename__ = "team"
-
-    id = Column(Integer, primary_key=True, autoincrement="auto")
-    name = Column(String(255), nullable=False)
-    city = Column(String(255), nullable=False)
-    abbreviation = Column(String(255), nullable=False)
-    logo = Column(String(255), nullable=False)
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
-
-    def __repr__(self):
-        return "<Team {}>".format(self.id)
+        return "<Post %r>" % self.slug
 
 
 Base.metadata.create_all(db)

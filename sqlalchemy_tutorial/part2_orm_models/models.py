@@ -21,6 +21,7 @@ class User(Base):
     last_name = Column(String(255))
     bio = Column(Text)
     avatar_url = Column(Text)
+    role = Column(String(255))
     last_seen = Column(DateTime)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())

@@ -20,7 +20,7 @@ def fetch_job_listings(engine: Engine) -> Optional[List[dict]]:
         text(
             "SELECT job_id, agency, business_title, \
             salary_range_from, salary_range_to \
-            FROM nyc_jobs ORDER BY RAND();"
+            FROM nyc_jobs ORDER BY RAND() LIMIT 10;"
         )
     )
     rows = [dict(row) for row in result.fetchall()]

@@ -41,7 +41,7 @@ def create_new_user(session: Session, user: User) -> User:
     :return: Optional[User]
     """
     try:
-        user_query = session.query(User).all()
+        user_query = session.query(User).filter(User.username == user.username).first()
         if user_query is None:
             session.add(user)  # Add the user
             session.commit()  # Commit the change

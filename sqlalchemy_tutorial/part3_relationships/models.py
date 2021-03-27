@@ -38,7 +38,7 @@ class Comment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    post_id = Column(Integer, index=True)
+    post_id = Column(Integer, ForeignKey("post.id"), index=True)
     body = Column(Text)
     upvotes = Column(Integer, default=1)
     removed = Column(Boolean, default=False)
@@ -69,6 +69,7 @@ class Post(Base):
 
     # Relationships
     author = relationship("User", backref="posts")
+    comments = relationship("Comment", backref="post")
 
     def __repr__(self):
         return "<Post %r>" % self.slug

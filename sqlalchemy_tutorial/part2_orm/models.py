@@ -3,7 +3,7 @@ from sqlalchemy import Column, DateTime, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 
-from database import db
+from database import engine
 
 Base = declarative_base()
 
@@ -30,4 +30,4 @@ class User(Base):
         return "<User %r>" % self.username
 
 
-Base.metadata.create_all(db)
+Base.metadata.create_all(engine)

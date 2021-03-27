@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from database import db
+from database import engine
 
 Base = declarative_base()
 
@@ -65,7 +65,7 @@ class Post(Base):
     body = Column(Text)
     status = Column(String(255), nullable=False, default="unpublished")
     created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, onupdate=func.now())
+    updated_at = Column(DateTime, server_default=func.now())
 
     # Relationships
     author = relationship("User", backref="posts")
@@ -74,4 +74,4 @@ class Post(Base):
         return "<Post %r>" % self.slug
 
 
-Base.metadata.create_all(db)
+Base.metadata.create_all(engine)

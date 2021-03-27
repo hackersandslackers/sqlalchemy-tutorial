@@ -18,8 +18,7 @@ export HELP
 .PHONY: run restart deploy update format lint clean help
 
 requirements: .requirements.txt
-env: .venv/bin/activate
-
+env: ./.venv/bin/activate
 
 .requirements.txt: requirements.txt
 	$(shell . .venv/bin/activate && pip install -r requirements.txt)
@@ -42,6 +41,7 @@ deploy:
 
 .PHONY: update
 update: env
+	.venv/bin/python3 -m pip install --upgrade pip setuptools wheel
 	poetry update
 	poetry export -f requirements.txt --output requirements.txt --without-hashes
 
@@ -54,7 +54,11 @@ format: env
 
 .PHONY: lint
 lint:
-	flake8 ./app --count --select=E9,F63,F7,F82 --show-source --statistics
+	flake8 . --count \
+			--select=E9,F63,F7,F82 \
+			--exclude .git,.github,__pycache__,.pytest_cache,.venv,logs,creds,.venv,docs,logs \
+			--show-source \
+			--statistics
 
 
 .PHONY: clean

@@ -1,129 +1,119 @@
-"""Create records from our data models with SQLAlchemy's ORM."""
+"""Create records related to one another via SQLAlchemy's ORM."""
 from typing import Tuple
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from sqlalchemy_tutorial.logger import LOGGER
+from logger import LOGGER
 from sqlalchemy_tutorial.part3_relationships.models import Comment, Post, User
 
 
-def orm_create_data(session: Session) -> None:
-    """
-    Populate our database with users, posts, and comments to query on.
-
-    :param session: SQLAlchemy database session.
-    :type session: Session
-
-    :returns: None
-    """
-    create_users(session)
-    create_post(session)
-    create_comment(session)
-    LOGGER.info(f"Finished creating user, post, and comment records.")
-
-
-def create_users(session: Session) -> Tuple[User, User]:
+def create_users(
+    session: Session, admin_user: User, regular_user: User
+) -> Tuple[User, User]:
     """
     Create a couple of user accounts.
 
     :param session: SQLAlchemy database session.
     :type session: Session
+    :param admin_user: User model representing admin user to be created.
+    :type admin_user: User
+    :param regular_user: User model representing non-admin user to be created.
+    :type regular_user: User
 
-    :returns: Tuple[User, User]
+    :return: Tuple[User, User]
     """
-    admin_user = User(
-        username="toddthebod",
-        password="Please don't set passwords like this",
-        email="todd@example.com",
-        first_name="Todd",
-        last_name="Birchard",
-        bio="I write tutorials on the internet.",
-        avatar_url="https://storage.googleapis.com/hackersandslackers-cdn/authors/todd_small@2x.jpg",
-        role="admin",
-    )
-    regular_user = User(
-        username="obnoxioustroll69",
-        password="Please don't set passwords like this",
-        email="trolliesttroll@example.com",
-        first_name="Chad",
-        last_name="Bowswick",
-        bio="I leave hurtful comments on coding tutorials I find on the internet.",
-        avatar_url="https://storage.googleapis.com/hackersandslackers-cdn/authors/todd_small@2x.jpg",
-    )
-    admin_user = create_new_user(admin_user, session)
-    regular_user = create_new_user(regular_user, session)
+    admin_user = create_new_user(session, admin_user)
+    regular_user = create_new_user(session, regular_user)
     LOGGER.success(f"Created 2 users: {admin_user} & {regular_user}")
     return admin_user, regular_user
 
 
-def create_new_user(user: User, session: Session) -> User:
+def create_new_user(session: Session, user: User) -> User:
     """
     Create a new user if username isn't already taken.
 
-    :param user: New user record to create.
-    :type user: User
     :param session: SQLAlchemy database session.
     :type session: Session
+    :param user: New user record to create.
+    :type user: User
+
     :return: Optional[User]
     """
     try:
-        user_query = session.query(User).filter(User.username == user.username).first()
+        user_query = session.query(User).all()
         if user_query is None:
             session.add(user)  # Add the user
             session.commit()  # Commit the change
             LOGGER.success(f"Created user: {user}")
-        LOGGER.warning(f"User already exists in database: {user}")
-        return user
+        else:
+            LOGGER.warning(f"Users already exists in database: {user_query}")
+        return session.query(User).filter(User.username == user.username).first()
     except IntegrityError as e:
         LOGGER.error(e.orig)
+        raise e.orig
+    except SQLAlchemyError as e:
+        LOGGER.error(f"Unexpected error when creating user: {e}")
+        raise e
 
 
-def create_post(session: Session) -> Post:
+def create_post(session: Session, post: Post, admin_user: User) -> Post:
     """
     Create a post authored by `admin_user`.
 
     :param session: SQLAlchemy database session.
     :type session: Session
+    :param post: Blog post to be created.
+    :type post: Post
+    :param admin_user: User to serve as post author.
+    :type admin_user: User
 
-    :returns: Post
+    :return: Post
     """
     try:
-        admin_user = session.query(User).filter(User.username == "toddthebod").first()
-        post = Post(
-            author_id=admin_user.id,
-            slug="fake-post-slug",
-            title="Fake Post Title",
-            summary="A fake post to have some fake comments.",
-            feature_image="https://hackersandslackers-cdn.storage.googleapis.com/2021/01/logo-smaller@2x.png",
-            body="Cheese slices monterey jack cauliflower cheese dolcelatte cheese and wine fromage frais rubber cheese gouda. Rubber cheese cheese and wine cheeseburger cheesy grin paneer paneer taleggio caerphilly. Edam mozzarella.",
+        existing_post = (
+            session.query(Post).filter(Post.author_id == admin_user.id).first()
         )
-        session.add(admin_user)  # Add the user
-        session.commit()  # Commit the change
-        LOGGER.success(f"Created post {post} published by user {admin_user}")
-        return post
+        if existing_post is None:
+            post.author_id = admin_user.id
+            session.add(post)  # Add the post
+            session.commit()  # Commit the change
+            LOGGER.success(
+                f"Created post {post} published by user {admin_user.username}"
+            )
+            return session.query(Post).filter(Post.author_id == admin_user.id).first()
+        else:
+            LOGGER.warning(f"Post already exists in database: {post}")
+            return existing_post
     except IntegrityError as e:
         LOGGER.error(e.orig)
+        raise e.orig
+    except SQLAlchemyError as e:
+        LOGGER.error(f"Unexpected error when creating user: {e}")
+        raise e
 
 
-def create_comment(session: Session) -> Comment:
+def create_comment(session: Session, regular_user: User, post: Post) -> Comment:
     """
     Create a comment posted by `regular_user` on `admin_user`'s post.
 
     :param session: SQLAlchemy database session.
     :type session: Session
+    :param regular_user: User to serve as comment author.
+    :type regular_user: User
+    :param post: Blog post to be commented on.
+    :type post: Post
 
-    :returns: Comment
+    :return: Comment
     """
     try:
-        regular_user = (
-            session.query(User).filter(User.username == "obnoxioustroll69").first()
-        )
-        post = session.query(Post).filter(Post.id == 1).first()
         comment = Comment(
             user_id=regular_user.id,
             post_id=post.id,
-            body="This post about SQLAlchemy is awful. You didn't even bother to explain how to install Python, which is where I (and so many others) got stuck. Plus, your code doesn't even work!! I cloned your code and it keeps giving me `environment variable` errors... WTF are environment variables?!!?!?",
+            body="This post about SQLAlchemy is awful. You didn't even bother to explain how to install Python, \
+                            which is where I (and so many others) got stuck. Plus, your code doesn't even work!! \
+                            I cloned your code and it keeps giving me `environment variable` errors... \
+                            WTF are environment variables?!!?!?",
             upvotes=2,
         )
         session.add(comment)  # Add the Comment
@@ -132,3 +122,7 @@ def create_comment(session: Session) -> Comment:
         return comment
     except IntegrityError as e:
         LOGGER.error(e.orig)
+        raise e.orig
+    except SQLAlchemyError as e:
+        LOGGER.error(f"Unexpected error when creating comment: {e}")
+        raise e

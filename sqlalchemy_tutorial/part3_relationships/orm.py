@@ -8,7 +8,7 @@ from logger import LOGGER
 from sqlalchemy_tutorial.part3_relationships.models import Comment, Post, User
 
 
-def create_new_user(session: Session, user: User) -> User:
+def create_user(session: Session, user: User) -> User:
     """
     Create a new user if username isn't already taken.
 
@@ -20,13 +20,13 @@ def create_new_user(session: Session, user: User) -> User:
     :return: Optional[User]
     """
     try:
-        user_query = session.query(User).filter(User.username == user.username).first()
-        if user_query is None:
+        existing_user = session.query(User).filter(User.username == user.username).first()
+        if existing_user is None:
             session.add(user)  # Add the user
             session.commit()  # Commit the change
             LOGGER.success(f"Created user: {user}")
         else:
-            LOGGER.warning(f"Users already exists in database: {user_query}")
+            LOGGER.warning(f"Users already exists in database: {existing_user}")
         return session.query(User).filter(User.username == user.username).first()
     except IntegrityError as e:
         LOGGER.error(e.orig)
@@ -36,31 +36,26 @@ def create_new_user(session: Session, user: User) -> User:
         raise e
 
 
-def create_post(session: Session, post: Post, admin_user: User) -> Post:
+def create_post(session: Session, post: Post) -> Post:
     """
-    Create a post authored by `admin_user`.
+    Create a post.
 
     :param session: SQLAlchemy database session.
     :type session: Session
     :param post: Blog post to be created.
     :type post: Post
-    :param admin_user: User to serve as post or comment author.
-    :type admin_user: User
 
     :return: Post
     """
     try:
-        existing_post = (
-            session.query(Post).filter(Post.author_id == admin_user.id).first()
-        )
+        existing_post = session.query(Post).filter(Post.slug == post.slug).first()
         if existing_post is None:
-            post.author_id = admin_user.id
             session.add(post)  # Add the post
             session.commit()  # Commit the change
             LOGGER.success(
-                f"Created post {post} published by user {admin_user.username}"
+                f"Created post {post} published by user {post.author.username}"
             )
-            return session.query(Post).filter(Post.author_id == admin_user.id).first()
+            return session.query(Post).filter(Post.slug == post.slug).first()
         else:
             LOGGER.warning(f"Post already exists in database: {post}")
             return existing_post
@@ -72,14 +67,12 @@ def create_post(session: Session, post: Post, admin_user: User) -> Post:
         raise e
 
 
-def create_comment(session: Session, regular_user: User, comment: Comment) -> Comment:
+def create_comment(session: Session, comment: Comment) -> Comment:
     """
     Create a comment posted by `regular_user` on `admin_user`'s post.
 
     :param session: SQLAlchemy database session.
     :type session: Session
-    :param regular_user: User to serve as comment author.
-    :type regular_user: User
     :param comment: User comment left on published post.
     :type comment: Comment
 
@@ -88,7 +81,9 @@ def create_comment(session: Session, regular_user: User, comment: Comment) -> Co
     try:
         session.add(comment)  # Add the Comment
         session.commit()  # Commit the change
-        LOGGER.success(f"Created comment {comment} posted by user {regular_user}")
+        LOGGER.success(
+            f"Created comment {comment} posted by user {comment.user.username}"
+        )
         return comment
     except IntegrityError as e:
         LOGGER.error(e.orig)

@@ -20,7 +20,9 @@ def create_user(session: Session, user: User) -> User:
     :return: Optional[User]
     """
     try:
-        existing_user = session.query(User).filter(User.username == user.username).first()
+        existing_user = (
+            session.query(User).filter(User.username == user.username).first()
+        )
         if existing_user is None:
             session.add(user)  # Add the user
             session.commit()  # Commit the change
@@ -81,9 +83,7 @@ def create_comment(session: Session, comment: Comment) -> Comment:
     try:
         session.add(comment)  # Add the Comment
         session.commit()  # Commit the change
-        LOGGER.success(
-            f"Created comment {comment} posted by user {comment.user.username}"
-        )
+        LOGGER.success(f"Created comment {comment} from user {comment.user.username}.")
         return comment
     except IntegrityError as e:
         LOGGER.error(e.orig)

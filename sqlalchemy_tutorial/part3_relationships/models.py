@@ -45,7 +45,7 @@ class Comment(Base):
     created_at = Column(DateTime, server_default=func.now())
 
     # Relationships
-    user = relationship("User", backref="comments")
+    user = relationship("User", backref="comment")
 
     def __repr__(self):
         return "<Comment %r>" % self.id

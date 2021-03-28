@@ -3,7 +3,7 @@ from sqlalchemy_tutorial.part3_relationships.models import Comment, Post, User
 
 from .joins import get_all_comments, get_all_posts
 from .objects import create_comment_objects, create_post_object, create_user_objects
-from .orm import create_comment, create_user, create_post
+from .orm import create_comment, create_post, create_user
 
 
 def create_relationships():

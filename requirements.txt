@@ -4,4 +4,4 @@ loguru==0.5.3; python_version >= "3.5"
 pymysql==1.0.2; python_version >= "3.6"
 python-dotenv==0.16.0
 sqlalchemy==1.4.3; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
-win32-setctime==1.0.3; sys_platform == "win32" and python_version >= "3.5"
+win32-setctime==1.1.0; sys_platform == "win32" and python_version >= "3.5"

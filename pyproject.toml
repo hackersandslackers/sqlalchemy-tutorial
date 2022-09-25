@@ -30,7 +30,7 @@ mock = "*"
 mypy = "*"
 black = "^20.8b1"
 isort = "^5.6.4"
-flake8 = "^3.8.4"
+flake8 = "^5.0.0"
 
 [tool.poetry.scripts]
 run = "main:init_script"

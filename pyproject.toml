@@ -18,19 +18,17 @@ keywords = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.10, <4.0"
 sqlalchemy = "*"
 pymysql = "*"
 python-dotenv = "*"
-loguru = "^0.5.3"
-
-[tool.poetry.dev-dependencies]
+loguru = "*"
 pytest = "*"
 mock = "*"
 mypy = "*"
-black = "^20.8b1"
-isort = "^5.6.4"
-flake8 = "^3.8.4"
+black = "*"
+isort = "*"
+flake8 = "*"
 
 [tool.poetry.scripts]
 run = "main:init_script"

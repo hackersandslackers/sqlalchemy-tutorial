@@ -10,10 +10,8 @@ def orm_create_user(session: Session, user: User) -> User:
     """
     Create a new instance of our `User` model.
 
-    :param session: SQLAlchemy database session.
-    :type session: Session
-    :param user: User data model for creation.
-    :type user: User
+    :param Session session: SQLAlchemy database session.
+    :param User user: User data model for creation.
 
     :return: User
     """
@@ -34,10 +32,8 @@ def orm_delete_user(session: Session, user: User):
     """
     Delete a user if it exists.
 
-    :param session: SQLAlchemy database session.
-    :type session: Session
-    :param user: User to be deleted.
-    :type user: User
+    :param Session session: SQLAlchemy database session.
+    :param User user: User to be deleted.
 
     :return: None
     """

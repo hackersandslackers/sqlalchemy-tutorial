@@ -1,3 +1,4 @@
+"""Create and delete SQL records using SQLAlchemy's ORM."""
 from database import session
 from sqlalchemy_tutorial.part2_orm.models import User
 

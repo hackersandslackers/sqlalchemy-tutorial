@@ -21,11 +21,11 @@ def orm_create_user(session: Session, user: User) -> User:
         LOGGER.success(f"Created new user: {user}")
         return user
     except IntegrityError as e:
-        LOGGER.error(e.orig)
-        raise e.orig
+        LOGGER.error(f"IntegrityError when creating user: {e}")
     except SQLAlchemyError as e:
+        LOGGER.error(f"SQLAlchemyError when creating user: {e}")
+    except Exception as e:
         LOGGER.error(f"Unexpected error when creating user: {e}")
-        raise e
 
 
 def orm_delete_user(session: Session, user: User):
@@ -42,8 +42,8 @@ def orm_delete_user(session: Session, user: User):
         session.commit()  # Commit the change
         LOGGER.success(f"Deleted user: {user}")
     except IntegrityError as e:
-        LOGGER.error(e.orig)
-        raise e.orig
+        LOGGER.error(f"IntegrityError when deleting user: {e}")
     except SQLAlchemyError as e:
+        LOGGER.error(f"SQLAlchemyError when deleting user: {e}")
+    except Exception as e:
         LOGGER.error(f"Unexpected error when deleting user: {e}")
-        raise e

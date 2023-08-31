@@ -1,5 +1,6 @@
 """Execute raw SQL queries against an SQLAlchemy engine."""
 from typing import List, Optional
+import json
 
 from sqlalchemy import text
 from sqlalchemy.engine.base import Engine
@@ -17,17 +18,18 @@ def fetch_job_listings(engine: Engine) -> Optional[List[dict]]:
     :return: Optional[List[dict]]
     """
     try:
+        LOGGER.info("Fetching job listings...")
         with engine.begin() as conn:
             result = conn.execute(
                 text(
                     "SELECT job_id, agency, business_title, \
                     salary_range_from, salary_range_to \
-                    FROM nyc_jobs ORDER BY RAND() LIMIT 10;"
+                    FROM nyc_jobs ORDER BY RAND() LIMIT 5;"
                 ),
             )
             results = result.fetchall()
             results_dict = [row._asdict() for row in results]
-            LOGGER.info(f"Selected {result.rowcount} rows.")
+            LOGGER.info(f"Selected {result.rowcount} rows: {json.dumps(results_dict, indent=2)}")
             return results_dict
     except SQLAlchemyError as e:
         LOGGER.error(f"SQLAlchemyError while fetching records: {e}")
@@ -52,7 +54,7 @@ def update_job_listing(engine: Engine) -> Optional[List[dict]]:
                     WHERE job_id = 229837;"
                 )
             )
-            LOGGER.info(f"Updated {result.rowcount} row: {result}")
+            LOGGER.success(f"Updated {result.rowcount} row: {result}")
             return result
     except SQLAlchemyError as e:
         LOGGER.error(f"SQLAlchemyError while updating records: {e}")

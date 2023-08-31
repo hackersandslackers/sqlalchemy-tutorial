@@ -27,7 +27,7 @@ class User(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     def __repr__(self):
-        return "<User %r>" % self.username
+        return f"<User id={self.id}, username={self.username}, email={self.email}>"
 
 
 Base.metadata.create_all(engine)

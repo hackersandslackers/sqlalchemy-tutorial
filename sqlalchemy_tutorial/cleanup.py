@@ -7,6 +7,7 @@ from logger import LOGGER
 
 
 def cleanup_data():
+    """Purge test database of all data."""
     try:
         session.execute(text("SET FOREIGN_KEY_CHECKS=0;"))
         session.commit()
@@ -20,8 +21,8 @@ def cleanup_data():
         session.commit()
         LOGGER.success("Successfully reset all data.")
     except IntegrityError as e:
-        LOGGER.error(e.orig)
-        raise e.orig
+        LOGGER.error(f"Integrity error when resetting data: {e}")
     except SQLAlchemyError as e:
+        LOGGER.error(f"SQLAlchemyError error when resetting data: {e}")
+    except Exception as e:
         LOGGER.error(f"Unexpected error when resetting data: {e}")
-        raise e

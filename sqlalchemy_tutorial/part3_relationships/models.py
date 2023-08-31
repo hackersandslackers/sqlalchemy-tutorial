@@ -28,7 +28,7 @@ class User(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     def __repr__(self):
-        return "<User %r>" % self.username
+        return f"<User id={self.id}, username={self.username}, email={self.email}>"
 
 
 class Comment(Base):
@@ -48,7 +48,7 @@ class Comment(Base):
     user = relationship("User", backref="comment")
 
     def __repr__(self):
-        return "<Comment %r>" % self.id
+        return f"<Comment id={self.id}, post_id={self.post_id}, user_id={self.user_id}, upvotes={self.upvotes}, created_at={self.created_at}>"
 
 
 class Post(Base):
@@ -72,7 +72,7 @@ class Post(Base):
     comments = relationship("Comment", backref="post")
 
     def __repr__(self):
-        return "<Post %r>" % self.slug
+        return f"<Post id={self.id}, slug={self.slug}, title={self.title}, body={self.body}>"
 
 
 Base.metadata.create_all(engine)

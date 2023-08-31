@@ -26,4 +26,3 @@ def cleanup_data():
         LOGGER.error(f"SQLAlchemyError error when resetting data: {e}")
     except Exception as e:
         LOGGER.error(f"Unexpected error when resetting data: {e}")
-

@@ -8,34 +8,19 @@ def formatter(log: dict) -> str:
     """
     Format log colors based on level.
 
-    :param log: Logged event stored as map containing contextual metadata.
-    :type log: dict
+    :param dict log: Logged event stored as map containing contextual metadata.
+
     :returns: str
     """
+    if log["level"].name == "INFO":
+        return "<fg #5278a3>{time:MM-DD-YYYY HH:mm:ss}</fg #5278a3> | <fg #b3cfe7>{level}</fg #b3cfe7>: <light-white>{message}</light-white>\n"
     if log["level"].name == "WARNING":
-        return (
-            "<white>{time:MM-DD-YYYY HH:mm:ss}</white> | "
-            "<light-yellow>{level}</light-yellow>: "
-            "<light-white>{message}</light-white> \n"
-        )
-    elif log["level"].name == "ERROR":
-        return (
-            "<white>{time:MM-DD-YYYY HH:mm:ss}</white> | "
-            "<light-red>{level}</light-red>: "
-            "<light-white>{message}</light-white> \n"
-        )
-    elif log["level"].name == "SUCCESS":
-        return (
-            "<white>{time:MM-DD-YYYY HH:mm:ss}</white> | "
-            "<light-green>{level}</light-green>: "
-            "<light-white>{message}</light-white> \n"
-        )
-    else:
-        return (
-            "<white>{time:MM-DD-YYYY HH:mm:ss}</white> | "
-            "<fg #67c9c4>{level}</fg #67c9c4>: "
-            "<light-white>{message}</light-white> \n"
-        )
+        return "<fg #5278a3>{time:MM-DD-YYYY HH:mm:ss}</fg #5278a3> | <fg #b09057>{level}</fg #b09057>: <light-white>{message}</light-white>\n"
+    if log["level"].name == "SUCCESS":
+        return "<fg #5278a3>{time:MM-DD-YYYY HH:mm:ss}</fg #5278a3> | <fg #6dac77>{level}</fg #6dac77>: <light-white>{message}</light-white>\n"
+    if log["level"].name == "ERROR":
+        return "<fg #5278a3>{time:MM-DD-YYYY HH:mm:ss}</fg #5278a3> | <fg #a35252>{level}</fg #a35252>: <light-white>{message}</light-white>\n"
+    return "<fg #5278a3>{time:MM-DD-YYYY HH:mm:ss}</fg #5278a3> | <fg #b3cfe7>{level}</fg #b3cfe7>: <light-white>{message}</light-white>\n"
 
 
 def create_logger() -> custom_logger:
